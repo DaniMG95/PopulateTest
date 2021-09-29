@@ -1,5 +1,5 @@
 from db import db
-
+import statistics
 
 class ItemModel(db.Model):
     """
@@ -9,6 +9,7 @@ class ItemModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
+    rating = db.Column(db.Integer)
     reviews = db.relationship('ReviewModel', lazy="dynamic")
 
     def __init__(self, name):
@@ -16,12 +17,16 @@ class ItemModel(db.Model):
         ItemModel class constructor
         """
         self.name = name
+        self.rating = 0
+
+    def __repr__(self):
+        return '<User %r>' % self.name
 
     def json(self):
         """
         Get object in json format
         """
-        return {'name': self.name, 'items': [review.json() for review in self.reviews.all()]}
+        return {'name': self.name, 'rating': self.rating, 'reviews': [review.json() for review in self.reviews.all()]}
 
 
     @classmethod
@@ -32,6 +37,14 @@ class ItemModel(db.Model):
         :return: ItemModel
         """
         return cls.query.filter_by(name=name).first()
+
+    def average_rating(self):
+        """
+        Get average rating item by name
+        :param name: item name
+        :return: integer
+        """
+        return statistics.mean(([review.rating for review in self.reviews.all()]))
 
     def save_from_db(self):
         """
