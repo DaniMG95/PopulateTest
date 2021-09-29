@@ -38,6 +38,15 @@ class ItemModel(db.Model):
         """
         return cls.query.filter_by(name=name).first()
 
+    @classmethod
+    def find_by_id(cls, id):
+        """
+        Get item by name
+        :param name: item name
+        :return: ItemModel
+        """
+        return cls.query.filter_by(id=id).first()
+
     def average_rating(self):
         """
         Get average rating item by name

@@ -1,37 +1,25 @@
-from flask_restful import Resource
-# from models.review import ReviewModel
+from flask_restful import Resource, reqparse
 from models.item import ItemModel
 
 class Item(Resource):
     """
-    Endpoint /item/<string:name>
+    Endpoint /item/<int:id>
     """
 
-    def get(self, name):
+    def get(self, id):
         """
-        Get itemModel name
+        Get itemModel id
         """
-        item = ItemModel.find_by_name(name)
+        item = ItemModel.find_by_id(id)
         if item:
             return item.json()
         return {'msg':"Item not exist"}, 401
 
-
-    def post(self, name):
+    def put(self, id):
         """
-        create itemModel name
+        update average rating of itemModel id
         """
-        if ItemModel.find_by_name(name):
-            return {'msg':"Item exist"}, 401
-        item = ItemModel(name)
-        item.save_from_db()
-        return item.json()
-
-    def put(self, name):
-        """
-        update average rating of itemModel name
-        """
-        item = ItemModel.find_by_name(name)
+        item = ItemModel.find_by_id(id)
         if item:
             item.rating = item.average_rating()
             item.save_from_db()
@@ -40,15 +28,35 @@ class Item(Resource):
 
 
 
-    def delete(self, name):
+    def delete(self, id):
         """
-        delete itemModel name
+        delete itemModel id
         """
-        item = ItemModel.find_by_name(name)
+        item = ItemModel.find_by_id(id)
         if item:
             item.delete_to_db()
             return {'msg':"Item deleted"}
         return {'msg':"Item not exist"}
+
+class ItemCreate(Resource):
+    """
+    Endpoint /item>
+    """
+    parser_item = reqparse.RequestParser()
+    parser_item.add_argument('name', type=str, help='review is name', required= True)
+
+    @classmethod
+    def post(cls):
+        """
+        create itemmodel id
+        """
+        args = cls.parser_item.parse_args()
+        name = args['name']
+        if ItemModel.find_by_name(name):
+            return {'msg':"item exist"}, 401
+        item = ItemModel(name)
+        item.save_from_db()
+        return item.json()
 
 
 class ItemList(Resource):
