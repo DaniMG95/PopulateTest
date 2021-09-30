@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_restful import Api
 from resources.item import Item, ItemList, ItemCreate
 from resources.review import Review
@@ -20,6 +20,10 @@ api.add_resource(Item, '/item/<int:id>')
 api.add_resource(ItemCreate, '/item')
 api.add_resource(ItemList, '/items')
 api.add_resource(Review, '/review/<int:item_id>')
+
+@app.route('/', methods=['GET','POST'])
+def root():
+    return render_template('index.html') # Return index.html
 
 
 if __name__ == '__main__':
