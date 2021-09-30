@@ -3,13 +3,13 @@ from flask_restful import Api
 from resources.item import Item, ItemList, ItemCreate
 from resources.review import Review
 from flask_cors import CORS
-
+import os
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\Users\\dani_\\PycharmProjects\\PopulateTest\\test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.getenv('path')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = 'Jose'
+app.secret_key = os.getenv('KEY')
 api = Api(app)
 
 @app.before_first_request
